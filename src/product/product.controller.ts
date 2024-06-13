@@ -7,30 +7,39 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  InternalServerErrorException,
   UploadedFiles,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
-  create(
+  @UseInterceptors(FilesInterceptor('imagesIds', 10)) // 10 é o número máximo de arquivos permitidos
+  async create(
     @Body() createProductDto: CreateProductDto,
-    @UploadedFiles() files: any,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    this.productService.uploadImage(files);
-    return this.productService.create(createProductDto);
+    try {
+      if (files && files.length > 0) {
+        await this.productService.uploadImage(files);
+      }
+
+      return await this.productService.create(createProductDto);
+    } catch (error) {
+      console.error('Erro ao criar produto:', error);
+      throw new InternalServerErrorException('Erro ao criar produto');
+    }
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  async findAll() {
+    return await this.productService.findAll();
   }
 
   @Get(':id')

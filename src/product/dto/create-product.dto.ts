@@ -19,5 +19,5 @@ export class CreateProductDto {
 
   @IsString({ each: true })
   @IsOptional()
-  imagesIds?: string[];
+  imagesIds?: any[];
 }

@@ -10,14 +10,15 @@ export class ProductService {
     private prismaService: PrismaService,
     private firebaseRepository: FirebaseRepository,
   ) {}
-  create(createProductDto: CreateProductDto) {
-    return this.prismaService.product.create({
+  async create(createProductDto: CreateProductDto) {
+    createProductDto.price = parseFloat(createProductDto.price as any);
+    return await this.prismaService.product.create({
       data: createProductDto,
     });
   }
 
-  findAll() {
-    return this.prismaService.product.findMany();
+  async findAll() {
+    return await this.prismaService.product.findMany();
   }
 
   findOne(id: string) {
@@ -39,10 +40,7 @@ export class ProductService {
     });
   }
 
-  uploadImage(imagesIds: any[]) {
-    for (const imageId of imagesIds) {
-      const flename = imageId.originalname + Date.now();
-      this.firebaseRepository.upload('products', flename);
-    }
+  uploadImage(imagesIds: Express.Multer.File[]) {
+    return this.firebaseRepository.upload('products', imagesIds);
   }
 }
