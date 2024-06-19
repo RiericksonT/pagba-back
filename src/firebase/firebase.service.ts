@@ -8,7 +8,7 @@ export class FirebaseRepository {
   constructor() {
     admin.initializeApp({
       credential: admin.credential.cert(
-        './src/firebase/pagba-fa1af-f2d24300e941.json',
+        './etc/secrets/pagba-fa1af-f2d24300e941.json',
       ),
     });
     this.storage = admin.storage();
