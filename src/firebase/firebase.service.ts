@@ -1,23 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { app, storage } from 'firebase-admin';
+import { Injectable } from '@nestjs/common';
+import admin, { storage } from 'firebase-admin';
 
 @Injectable()
 export class FirebaseRepository {
-  #db: FirebaseFirestore.Firestore;
-  #storage: storage.Storage;
+  private readonly storage: storage.Storage;
 
-  constructor(@Inject('FIREBASE_APP') private firebaseApp: app.App) {
-    this.#db = firebaseApp.firestore();
-    this.#storage = firebaseApp.storage();
-  }
-
-  async create(collection: string, data: any) {
-    return this.#db.collection(collection).add(data);
+  constructor() {
+    admin.initializeApp({
+      credential: admin.credential.cert(
+        './src/firebase/pagba-fa1af-f2d24300e941.json',
+      ),
+    });
+    this.storage = admin.storage();
   }
 
   async upload(bucket: string, files: Express.Multer.File[]) {
     const promises = files.map(async (file) => {
-      const storageRef = this.#storage.bucket(bucket).file(file.originalname);
+      const storageRef = this.storage.bucket(bucket).file(file.originalname);
 
       await storageRef.save(file.buffer, {
         metadata: {
