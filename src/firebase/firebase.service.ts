@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import admin, { storage } from 'firebase-admin';
 
+interface ImageInfo {
+  filename: string;
+  url: string;
+}
+
 @Injectable()
 export class FirebaseRepository {
   private readonly config: any;
@@ -21,21 +26,42 @@ export class FirebaseRepository {
       universe_domain: process.env.universe_domain,
     };
     admin.initializeApp({
-      credential: admin.credential.cert(this.config),
+      credential: admin.credential.cert(
+        './src/firebase/pagba-fa1af-f2d24300e941.json',
+      ),
     });
     this.storage = admin.storage();
   }
 
-  async upload(bucket: string, files: Express.Multer.File[]) {
+  async upload(
+    bucket: string,
+    files: Express.Multer.File[],
+  ): Promise<ImageInfo[]> {
+    const images: ImageInfo[] = [];
     const promises = files.map(async (file) => {
-      const storageRef = this.storage.bucket(bucket).file(file.originalname);
+      const fileName = file.originalname.replace(/\s+/g, '');
+      const dateStr = Date().toLocaleLowerCase('pt-br').replace(/\s+/g, '');
+      const storageRef = this.storage
+        .bucket('gs://pagba-fa1af.appspot.com/')
+        .file(fileName + dateStr);
 
       await storageRef.save(file.buffer, {
         metadata: {
           contentType: file.mimetype,
         },
       });
+
+      const publicUrl = `https://storage.googleapis.com/${'pagba-fa1af'}/${fileName}${dateStr}`;
+
+      // Adicionar a informação da imagem ao array
+      images.push({
+        filename: storage.name,
+        url: publicUrl,
+      });
     });
-    return Promise.all(promises);
+
+    await Promise.all(promises);
+
+    return images;
   }
 }

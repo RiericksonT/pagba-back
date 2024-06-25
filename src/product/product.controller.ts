@@ -27,9 +27,9 @@ export class ProductController {
   ) {
     try {
       if (files && files.length > 0) {
-        await this.productService.uploadImage(files);
+        const imgs = await this.productService.uploadImage(files);
+        createProductDto.imagesIds = imgs.map((img) => img.url);
       }
-
       return await this.productService.create(createProductDto);
     } catch (error) {
       console.error('Erro ao criar produto:', error);
