@@ -50,10 +50,21 @@ export class ProductService {
     }));
   }
 
-  findOne(id: string) {
-    return this.prismaService.product.findUnique({
+  async findOne(id: string) {
+    const product = await this.prismaService.product.findUnique({
       where: { id },
     });
+    const productImage = await this.prismaService.image.findMany({
+      where: { productId: id },
+      select: {
+        url: true,
+      },
+    });
+
+    return {
+      product: product,
+      productImage: productImage,
+    };
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
