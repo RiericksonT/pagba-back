@@ -10,7 +10,7 @@ import { EncryptService } from './middleware/encrypt.service';
     UserModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET,
+      secret: 'secret',
       signOptions: { expiresIn: '1d' },
     }),
   ],

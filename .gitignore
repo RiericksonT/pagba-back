@@ -55,5 +55,5 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-src/firebase/pagba-fa1af-f2d24300e941.json
+src/firebase/pagba-fa1af-firebase-adminsdk-82kbi-283fd38440.json
 etc/

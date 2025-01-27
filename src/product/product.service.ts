@@ -16,7 +16,6 @@ export class ProductService {
     private firebaseRepository: FirebaseRepository,
   ) {}
   async create(createProductDto: CreateProductDto) {
-    console.log(createProductDto);
     createProductDto.price = parseFloat(createProductDto.price as any);
     return await this.prismaService.product.create({
       data: {
@@ -25,7 +24,7 @@ export class ProductService {
         description: createProductDto.description,
         images: {
           create: createProductDto.imagesIds.map((image) => ({
-            url: image,
+            url: `https://firebasestorage.googleapis.com/v0/b/pagba-fa1af.appspot.com/o/${image}?alt=media`,
           })),
         },
         category: {

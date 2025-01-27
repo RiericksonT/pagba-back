@@ -28,7 +28,7 @@ export class ProductController {
     try {
       if (files && files.length > 0) {
         const imgs = await this.productService.uploadImage(files);
-        createProductDto.imagesIds = imgs.map((img) => img.url);
+        createProductDto.imagesIds = imgs.map((img) => img.url.split('/')[4]);
       }
       return await this.productService.create(createProductDto);
     } catch (error) {
