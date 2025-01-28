@@ -27,7 +27,7 @@ export class FirebaseRepository {
     };
     admin.initializeApp({
       credential: admin.credential.cert(
-        './src/firebase/pagba-fa1af-firebase-adminsdk-82kbi-283fd38440.json',
+        './pagba-fa1af-firebase-adminsdk-82kbi-283fd38440.json',
       ),
     });
     this.storage = admin.storage();
