@@ -40,10 +40,17 @@ export class FirebaseRepository {
     const images: ImageInfo[] = [];
     const promises = files.map(async (file) => {
       const fileName = file.originalname.replace(/\s+/g, '');
-      const dateStr = Date().toLocaleLowerCase('pt-br').replace(/\s+/g, '');
+      const dateStr = new Date();
+      const formattedDate =
+        dateStr.getFullYear().toString() +
+        (dateStr.getMonth() + 1).toString().padStart(2, '0') +
+        dateStr.getDate().toString().padStart(2, '0') +
+        dateStr.getHours().toString().padStart(2, '0') +
+        dateStr.getMinutes().toString().padStart(2, '0') +
+        dateStr.getSeconds().toString().padStart(2, '0');
       const storageRef = this.storage
         .bucket('gs://pagba-fa1af.appspot.com/')
-        .file(fileName + dateStr);
+        .file(fileName + formattedDate + '.jpg');
 
       await storageRef.save(file.buffer, {
         metadata: {
@@ -51,7 +58,7 @@ export class FirebaseRepository {
         },
       });
 
-      const publicUrl = `https://storage.googleapis.com/${'pagba-fa1af'}/${fileName}${dateStr}`;
+      const publicUrl = `https://storage.googleapis.com/${'pagba-fa1af'}/${fileName}${formattedDate}.jpg`;
 
       // Adicionar a informação da imagem ao array
       images.push({
